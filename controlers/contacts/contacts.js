@@ -61,28 +61,28 @@ const addContact = async (req, res, next) => {
         };
     };
 };
-//------------------------NOT DONE-------------------------------------------------------
+
 const removeContact = async (req, res, next) => {
-  try {
-    const contactId = req.params.contactId;
-    await deleteContact(contactId)
-    if (contactId) {
-      res.json({
-        status: 200,
-        message: "Contact deleted"
-      });
-    } else {
-      res.status(404).json({
-        status: 404,
-        message: "Not found"
-      });
+    try {
+        const contactId = req.params.contactId;
+        await deleteContact(contactId)
+        if (contactId) {
+            res.json({
+                status: 200,
+                message: "Contact deleted"
+            });
+        } else {
+            res.status(404).json({
+                status: 404,
+                message: "Not found"
+            });
+        };
+    } catch (error) {
+        console.log(error.message);
+        next(error);
     };
-  } catch (error) {
-    console.log(error.message);
-    next(error);
-  };
 };
-//---------------------------------DONE----------------------------------------------
+
 const updateContact = async (req, res, next) => {
     const { error } = contactSchema.validate(req.body);
     if (error) {
@@ -134,7 +134,8 @@ const favoriteContact = async (req, res, next) => {
                     status: 200,
                     data: { result },
                 })
-            } else {
+            }
+            if (!result) {
                 res.status(404).json({
                     status: 404,
                     message: "Not found",
