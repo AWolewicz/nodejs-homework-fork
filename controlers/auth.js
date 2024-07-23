@@ -9,18 +9,18 @@ const userJoi = Joi.object({
 
 const register = async (req, res, next) => {
     const { password, email } = req.body
-    const user = await User.findOne({ email })
-    if (user) {
-        return res.status(409).json({
-            status: 409,
-            message: 'Email in use',
-        })
-    };
     const { error } = userJoi.validate(req.body);
     if (error) {
         res.status(400).json({
             status: 400,
             message: error.message
+        });
+    };
+    const user = await User.findOne({ email })
+    if (user) {
+        return res.status(409).json({
+            status: 409,
+            message: 'Email in use',
         });
     } else {
         try {
@@ -79,15 +79,7 @@ const login = async (req, res, next) => {
 };
 
 const logout = async (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];
-
-    if (!token) {
-        return res.status(401).json({
-            status: 401,
-            message: 'Not authorized',
-        });
-    }
-
+    const { token } = req.user;
     try {
         const user = await User.findOne({ token });
 

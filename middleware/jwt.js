@@ -5,7 +5,7 @@ const authMiddleware = (req, res, next) => {
         'jwt',
         { session: false },
         (error, user) => {
-            if (!user || error) {
+            if (!user || error || !user.token) {
                 return res.status(401).json({
                     message: 'Not authorized'
                 })
