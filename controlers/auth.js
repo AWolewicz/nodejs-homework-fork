@@ -22,7 +22,7 @@ const register = async (req, res, next) => {
             status: 409,
             message: 'Email in use',
         });
-    } else {
+    }
         try {
             const newUser = new User({ email })
             await newUser.setPassword(password)
@@ -33,21 +33,25 @@ const register = async (req, res, next) => {
             })
         } catch (error) {
             next(error)
-        }
-    }
+    };
 };
 
 const login = async (req, res, next) => {
     const { password, email } = req.body
-    const user = await User.findOne({ email })
-    
     const { error } = userJoi.validate(req.body);
     if (error) {
         res.status(400).json({
             status: 400,
             message: error.message
         });
-    } else {
+    };
+    const user = await User.findOne({ email })
+    if (!user) {
+        return res.status(401).json({
+            status: 401,
+            message: 'Email or password is wrong',
+        })
+    };
         try {
             const isPasswordCorrect = await User.validatePassword(password)
             if (isPasswordCorrect) {
@@ -66,29 +70,15 @@ const login = async (req, res, next) => {
                     user,
                 })
             }
-            if (!user) {
-                return res.status(401).json({
-                    status: 401,
-                    message: 'Email or password is wrong',
-                })
-            }
         } catch (error) {
             next(error)
         }
-    }
-};
+    };
 
 const logout = async (req, res, next) => {
     const { token } = req.user;
     try {
         const user = await User.findOne({ token });
-
-        if (!user) {
-            return res.status(401).json({
-                status: 401,
-                message: 'Not authorized',
-            });
-        }
 
         user.token = null;
         await user.save();
