@@ -2,6 +2,7 @@ const express = require('express')
 const logger = require('morgan')
 const cors = require('cors')
 const jwtStrategy = require('./config/config-jwt')
+const path = require('path')
 
 require('dotenv').config();
 
@@ -20,6 +21,8 @@ jwtStrategy()
 
 app.use('/users', authRouter)
 app.use('/api/contacts', contactsRouter)
+
+app.use(express.static(path.resolve(__dirname, './public')))
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found' })
