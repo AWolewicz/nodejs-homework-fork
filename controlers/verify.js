@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const { sendEmail } = require('../email');
+const { sendVerificationEmail } = require('../email');
 const Joi = require('joi');
 
 const emailJoi = Joi.object({
@@ -57,7 +57,7 @@ const verify = async (req, res, next) => {
             });
         }
 
-        await sendEmail(user.email, user.verificationToken);
+        await sendVerificationEmail(user.email, user.verificationToken);
 
         res.status(200).json({
             status: 200,

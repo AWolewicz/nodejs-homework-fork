@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-async function sendEmail(email, token) {
+async function sendVerificationEmail(email, token) {
     const verificationLink = `www.www.pl/users/verify/${token}`;
     const options = await transporter.sendMail({
         from: '"Agnieszka" <mycompany@gmail.com>',
@@ -24,4 +24,4 @@ async function sendEmail(email, token) {
     });
 };
 
-module.exports = sendEmail;
+module.exports = sendVerificationEmail;

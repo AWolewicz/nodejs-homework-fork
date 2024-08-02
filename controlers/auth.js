@@ -6,7 +6,7 @@ const Jimp = require("jimp");
 const fs = require("fs/promises");
 const path = require("path");
 const { v4: uuidV4 } = require("uuid");
-const { sendEmail } = require('../email')
+const { sendVerificationEmail } = require('../email')
 
 const userJoi = Joi.object({
     password: Joi.string().min(3).max(30).required(),
@@ -40,8 +40,8 @@ const register = async (req, res, next) => {
         })
         
         await newUser.setPassword(password)
+        await sendVerificationEmail()
         await newUser.save()
-        await sendEmail()
 
         res.status(201).json({
             status: 201,
