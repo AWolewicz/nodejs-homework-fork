@@ -6,6 +6,7 @@ const Jimp = require("jimp");
 const fs = require("fs/promises");
 const path = require("path");
 const { v4: uuidV4 } = require("uuid");
+const { sendVerificationEmail } = require('../email')
 
 const userJoi = Joi.object({
     password: Joi.string().min(3).max(30).required(),
@@ -30,10 +31,18 @@ const register = async (req, res, next) => {
     }
     try {
         const avatar = gravatar.url(email, { s: "250", r: "pg", d: "404" });
-        const newUser = new User({ email })
-        newUser.avatarURL = avatar;
+        const verificationToken = uuidV4();
+        const newUser = new User({
+            email,
+            avatarURL: avatar,
+            verificationToken,
+            verify: false,
+        })
+        
         await newUser.setPassword(password)
+        await sendVerificationEmail()
         await newUser.save()
+
         res.status(201).json({
             status: 201,
             data: { newUser }
